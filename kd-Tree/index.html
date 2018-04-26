@@ -1,0 +1,120 @@
+<p style="line-height: 18px; font-size: 18px; font-family: times;">
+    <br>
+    <br>
+    <script>
+        function sortPoints(byX, Q) {
+            if (byX)
+                Q.sort(compareNumbersX);
+            else
+                Q.sort(compareNumbersY);
+            return Q;
+        }
+
+        function compareNumbersX(a, b) {
+            return a.x - b.x;
+        }
+
+        function compareNumbersY(a, b) {
+            return a.y - b.y;
+        }
+
+        let pointsNumber = 1000000;
+        let Q = [];
+        for (let i = 0; i < pointsNumber; i++) {
+            Q.push({
+                x: Math.floor((Math.random() * pointsNumber * 1) + 1),
+                y: Math.floor((Math.random() * pointsNumber * 1) + 1)
+            });
+        }
+       /* Q = [{x:0.62 , y:0.94 }, 
+        {x:1.26 , y:3.37 }, 
+        {x:2.07 , y:2.26},
+        {x:2.75, y:0}, 
+        {x:3.43, y:2.96},
+        {x:4.02 , y:1.77}, 
+        {x:4.6 , y:0.53}, 
+        {x:5.24, y:1.56},
+        {x:6 , y:4}, 
+        {x:4.6 , y:5}];*/
+
+        console.log(Q);
+        
+        let sortedX = sortPoints(true, Q).slice();
+		let sortedY = sortPoints(false, Q).slice();
+        
+        let B = createTree2(sortedX,sortedY, 0);
+        console.log(B);
+        
+		function assignX(S, linePoint, line, mode) {
+        	if(mode==0) {
+            	return [S.slice(0,line), S.slice(line,S.length)]; 
+            } else {
+            	let temp1=[], temp2=[];
+            	for(let i=0; i<S.length; i++) {
+                	if(S[i].y<=linePoint.y) {
+                    	temp1.push(S[i]);
+                    } else {
+                    	temp2.push(S[i]);
+                    }
+                }
+                return [temp1, temp2];
+            }
+        }
+        function assignY(S, linePoint, line, mode) {
+        	if(mode==1) {
+            	return [S.slice(0,line), S.slice(line,S.length)]; 
+            } else {
+            	let temp1=[], temp2=[];
+            	for(let i=0; i<S.length; i++) {
+                	if(S[i].x<=linePoint.x) {
+                    	temp1.push(S[i]);
+                    } else {
+                    	temp2.push(S[i]);
+                    }
+                    
+                }
+                return [temp1, temp2];
+            }
+        }
+		function createTree2(SX, SY, d) {
+            let root = {
+                leftSon: null,
+                rightSon: null,
+                point: null
+            };
+            if (SX.length <= 1 || SY.length <= 1) {
+                root.point = SX.length != 0 ? SX[0] : SY[0];
+                return root;
+            } 
+            let line = null, linePoint=null;
+			if(d % 2 == 0) {
+            	line = Math.floor((SX.length) / 2);
+                linePoint=SX[line-1];
+            } else {
+            	line = Math.floor((SY.length) / 2);
+            	if(SY.length % 2 == 0) {	
+                	linePoint=SY[line-1];
+                    line = line-1;
+                } else {
+                	linePoint=SY[line];
+                }
+            }
+			
+            let [newX1, newX2] = assignX(SX, linePoint, line, d % 2);
+            let [newY1, newY2] = assignY(SY, linePoint, line, d % 2);
+           /*	console.log(linePoint);
+            console.log(newX1);
+            console.log(newX2);
+            console.log(newY1);
+            console.log(newY2);*/
+            
+            root.leftSon = createTree2(newX1, newY1, d + 1);
+            root.rightSon = createTree2(newX2, newY2, d + 1);
+            root.point = linePoint;
+            return root;
+
+        }
+
+       
+    </script>
+</p>

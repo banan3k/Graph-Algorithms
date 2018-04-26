@@ -1,0 +1,145 @@
+<canvas id="canvas" width="1000" height="1000">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+<p style="line-height: 18px; font-size: 18px; font-family: times;">
+  Click "<i>Load samples</i>" to view and edit more JS samples.<br>
+  <br> Labyrinth generated with JavaScript:<br><br>
+  <script>
+    let polygon = [];
+    let point = [0, 0];
+
+    let dlugoscBokow = 200;
+    let odchylGoraDol = 25;
+    let odchylBoki = 10;
+
+    //podstawa
+
+    let points = [];
+
+    points[0] = [0, 0];
+    document.writeln('<br>');
+    document.writeln('<br>');
+    document.writeln('<br>');
+
+    for (let i = 1; i < dlugoscBokow; i++) {
+      let randX2 = Math.floor((Math.random() * odchylBoki));
+
+      point = [point[0] + 1, randX2];
+      points[i] = point;
+
+      if (point[0] == 0)
+        break;
+    }
+
+    for (let i = dlugoscBokow; i < 2 * dlugoscBokow; i++) {
+      let randX = point[0];
+
+      if (i % 2 == 0 || i == 2 * dlugoscBokow - 1)
+        randX = 0;
+      else
+        randX = -1;
+      point = [dlugoscBokow + randX, point[1] + 1];
+      points[i] = point
+      // document.writeln(points[i]);
+      // document.writeln('<br>');
+    }
+
+    for (let i = 2 * dlugoscBokow; i < 3 * dlugoscBokow; i++) {
+      let randX2 = Math.floor((Math.random() * odchylBoki));
+      point = [point[0] - 1, dlugoscBokow - randX2];
+      points[i] = point;
+    }
+
+    for (let i = 3 * dlugoscBokow; i < dlugoscBokow * 4; i++) {
+      let randX = point[0];
+
+      if (i % 2 == 0)
+        randX = 1;
+      else
+        randX = 0;
+      point = [randX, point[1] - 1];
+      points[i] = point
+
+      if (point[1] == 0)
+        break;
+    }
+
+    for (let i = 0; i < dlugoscBokow * 4; i++) {
+      document.writeln(points[i]);
+      document.writeln('<br>');
+    }
+
+    let resize = 5;
+    //alert(points[0][0]);
+    // get the canvas element using the DOM
+    var canvas = document.getElementById('canvas');
+
+    // Make sure we don't execute when canvas isn't supported
+    if (canvas.getContext) {
+
+      // use getContext to use the canvas for drawing
+      var ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = "red";
+
+      // calculate max and min x and y
+      var minX = points[0][0];
+      var maxX = points[0][0];
+      var minY = points[0][1];
+      var maxY = points[0][1];
+
+      for (var i = 1; i < points.length; i++) {
+        if (points[i][0] < minX) minX = points[i][0];
+        if (points[i][0] > maxX) maxX = points[i][0];
+        if (points[i][1] < minY) minY = points[i][1];
+        if (points[i][1] > maxY) maxY = points[i][1];
+      }
+
+      // choose a "central" point
+      var center = {
+        x: minX + (maxX - minX) / 2,
+        y: minY + (maxY - minY) / 2
+      };
+
+      // precalculate the angles of each point to avoid multiple calculations on sort
+      for (var i = 0; i < points.length; i++) {
+        points[i].angle = Math.acos((points[i][0] - center.x) / lineDistance(center, points[i]));
+
+        if (points[i][1] > center.y) {
+          points[i].angle = Math.PI + Math.PI - points[i].angle;
+        }
+      }
+
+      // sort by angle
+      points = points.sort(function(a, b) {
+        return a.angle - b.angle;
+      });
+
+      // Draw shape
+      ctx.beginPath();
+      ctx.moveTo(points[0][0] * resize, points[0][1] * resize);
+
+      for (var i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i][0] * resize, points[i][1] * resize);
+      }
+
+      ctx.lineTo(points[0][0] * resize, points[0][1] * resize);
+
+      ctx.stroke();
+      ctx.fill();
+    }
+
+    function lineDistance(point1, point2) {
+      var xs = 0;
+      var ys = 0;
+
+      xs = point2[0] - point1.x;
+      xs = xs * xs;
+
+      ys = point2[1] - point1.y;
+      ys = ys * ys;
+
+      return Math.sqrt(xs + ys);
+    }
+  </script>
+</p>

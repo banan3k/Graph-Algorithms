@@ -1,0 +1,72 @@
+<p style="line-height: 18px; font-size: 18px;  font-family: times;">
+    Click "<i>Load samples</i>" to view and edit more JS samples.
+    <br>
+    <br> Labyrinth generated with JavaScript:
+    <br>
+    <br>
+    <script>
+        function compareNumbers(a, b) {
+            return a.angle - b.angle;
+        }
+
+        let pointsNumber = 10;
+        let Q = [];
+        for (let i = 0; i < pointsNumber; i++) {
+            Q.push({
+                x: Math.floor((Math.random() * pointsNumber * 1) + 1),
+                y: Math.floor((Math.random() * pointsNumber * 1) + 1)
+            });
+        }
+Q = [{x:6.01 ,y:0.43 }, 
+{x:28.04 ,y:3.58 } ,
+{x:28.04 ,y:7.25 } ,
+{x:34.54 ,y:11.23 } ,
+{x:26.87 ,y:13.55 } ,
+{x:23.45 ,y:16.09 } ,
+{x:17.55 ,y:19.52 } ,
+{x:15.24 ,y:17.74 } ,
+{x:11.99 ,y:15.01 } ,
+{x:10 ,y:20 } ,
+{x:8.32 ,y:30.01 }, 
+{x:4.19 ,y:16.72 } ,
+{x:0 ,y:10 } ];
+
+        let lowestY = null;
+        for (let i = 0; i < Q.length; i++) {
+            if (lowestY == null || lowestY > Q[i].y) {
+                lowestY = Q[i];
+            }
+        }
+        for (let i = 0; i < Q.length; i++) {
+            Q[i].angle = Math.atan2(Q[i].y - lowestY.y, Q[i].x - lowestY.x);
+        }
+        Q.sort(compareNumbers);
+		let stacked = [];
+        stacked.push(lowestY);
+        stacked.push(Q[1]);
+        stacked.push(Q[2]);
+        for(let i=3; i<Q.length; i++) {
+        	let pi = Q[i];
+            let p1 = stacked[stacked.length-1];
+            let p2 = stacked[stacked.length-2];
+        	let sgn = 0;
+            while(sgn<=0 || stacked.length==1) {
+                /*
+                   p = p2, q=p1, r=p1
+                   x(p) y(p) 1
+                   x(q) y(q) 1
+                   x(r) y(r) 1
+                */
+            	sgn = (p2.x*p1.y)+(p2.y*pi.x)+(p1.x*pi.y)-((p1.y*pi.x)+(p2.x*pi.y)+(p2.y*p1.x));
+                if(sgn<=0) {
+                	stacked.pop();
+                    p1 = stacked[stacked.length-1];
+             		p2 = stacked[stacked.length-2];
+                }
+            }
+            stacked.push(pi); 
+        }
+        console.log(stacked);
+        console.log(Q);
+    </script>
+</p>s

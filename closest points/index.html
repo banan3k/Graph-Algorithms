@@ -1,0 +1,118 @@
+<html>
+<meta charset="utf-8" />
+
+<body>
+  <script>
+    let time = 0;
+    let temp=0;
+    let d2 = Number.POSITIVE_INFINITY;
+
+    function distCalc(p, q) {
+      var a = p.x - q.x;
+      var b = p.y - q.y;
+
+      if (closestPoints[0] == null) {
+        closestPoints[0] = p;
+        closestPoints[1] = q;
+      }
+
+      return Math.sqrt(a * a + b * b);
+    }
+
+    function compareNumbersX(a, b) {
+      return a.x - b.x;
+    }
+
+    function compareNumbersY(a, b) {
+      return a.y - b.y;
+    }
+
+    function sortPoints(byX, Q) {
+      if (byX)
+        Q.sort(compareNumbersX);
+      else
+        Q.sort(compareNumbersY);
+      return Q;
+    }
+
+    function chooseMin(a, b) {
+      if (a <= b)
+        return a;
+      else
+        return b;
+    }
+
+    function minPair(Q, X, Y) {
+
+      if (Q.length == 1)
+        return Number.POSITIVE_INFINITY;
+      else if (Q.length == 2) {
+        if (d2 >= distCalc(Q[0], Q[1])) {
+          d2 = distCalc(Q[0], Q[1]);
+          closestPoints[0] = Q[0];
+          closestPoints[1] = Q[1];
+        }
+        return distCalc(Q[0], Q[1]);
+      }
+
+      let line = Math.floor(Q.length / 2);
+      let linePoint = Q[line];
+      let Ql = Q.slice(0, line);
+      let Qr = Q.slice(-line);
+
+      let Xl = X.slice(0, line);
+      let Yl = Y.slice(0, line);
+      let Xr = X.slice(-line);
+      let Yr = Y.slice(-line);
+
+      let dL = minPair(Ql, Xl, Yl);
+      let dR = minPair(Qr, Xr, Yr);
+
+      let d = chooseMin(dL, dR);
+
+      let Y2 = [];
+      for (let i = 0; i < Y.length; i++) {
+        if (distCalc(linePoint, Y[i]) <= d) {
+          Y2.push(Y[i]);
+        }
+      }
+      for (let i = 0; i < Y2.length; i++) {
+        for (let j = 0; j < chooseMin(7, Y2.length - i); j++) {
+          time++;
+          if (i != (j + i) && distCalc(Y2[i], Y2[i + j]) <= d) {
+            d = distCalc(Y2[i], Y2[i + j]);
+            d2 = d;
+            if (d2 >= d) {
+              d2 = d;
+              closestPoints[0] = Y2[i];
+              closestPoints[1] = Y2[i + j];
+            }
+          }
+        }
+      }
+      return d;
+    }
+
+    let pointsNumber = 10000;
+    let Q = [];
+    for (let i = 0; i < pointsNumber; i++) {
+      Q.push({
+        x: Math.floor((Math.random() * pointsNumber*1000) + 1),
+        y: Math.floor((Math.random() * pointsNumber*1000) + 1)
+      });
+    }
+
+    let X = sortPoints(true, Q);
+    let Y = sortPoints(false, Q);
+    console.log(Q);
+    console.log("sorted");
+    let closestPoints = [];
+
+    console.log("length: " + minPair(Q, X, Y));
+    console.log(closestPoints[0]);
+    console.log(closestPoints[1]);
+
+  </script>
+</body>
+
+</html>
