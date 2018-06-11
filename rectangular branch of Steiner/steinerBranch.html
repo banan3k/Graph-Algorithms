@@ -1,0 +1,76 @@
+
+<script>
+let G = [];
+let P = [];
+
+function orderByCoord(a, b) {
+	let tempSum = sumCoord(b) - sumCoord(a);
+	if(tempSum==0) {
+    	return (a.x-b.x);
+    } else {
+    	return tempSum;
+    }
+}
+function orderByCoordM(a, b) {
+	let tempSum = sumCoord(b.m) - sumCoord(a.m);
+	if(tempSum==0) {
+    	return (a.m.x-b.m.x);
+    } else {
+    	return tempSum;
+    }
+}
+
+function sumCoord(point) {
+	return point.x+point.y;
+}
+function mergePointsCoord(p, q) {
+	let point = {x:p.x, y:p.y};
+    if(p.x>q.x) {
+    	point.x = q.x;
+    }
+    if(p.y>q.y) {
+    	point.y = q.y;
+    }
+ 	return point;
+}
+
+P = [{x:1, y:1},{x:4, y:3},{x:6, y:3},{x:2, y:4},{x:4, y:4},{x:5, y:4},{x:3, y:6},{x:5, y:6}];
+P = P.sort(orderByCoord);
+
+console.log(P);
+
+function choosePoints() {
+	let chosen = {a:0, b:0};
+	let mP = [];
+	for(let i=0; i<P.length; i++) {
+  		for(let i2=0; i2<P.length; i2++) {
+    		if(i!=i2) {
+            	mP[i*P.length+i2] = {};
+				mP[i*P.length+i2].index = i;
+        		mP[i*P.length+i2].index2 = i2;
+        		mP[i*P.length+i2].m = mergePointsCoord(P[i], P[i2]);
+        	}
+    	}
+	}
+    mP = mP.sort(orderByCoordM);
+
+    return [mP[0].index, mP[0].index2];
+}
+
+while(P.length>1) {
+	console.log("P[0]:");
+	console.log(P[0]);
+    console.log("G:");
+    console.log(G);
+    let [a, b] = choosePoints();
+   // console.log(P[a].x+" vs "+P[b].x); 
+  //  console.log(a+" vs "+b);
+    let tempPoint = P[a];
+    P[a] = mergePointsCoord(P[a], P[b]);
+    G.push({point:P[a], lineP:tempPoint, lineQ:P[b]});
+    P.splice(b, 1);
+}
+console.log("Final B:");
+console.log(G);
+</script>
+</p>
